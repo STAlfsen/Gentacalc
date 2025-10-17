@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gentacalc</title>
+    <style>
+      :root {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.5;
+        color: #0f172a;
+        background: #f1f5f9;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 1.8rem 1.25rem 3rem;
+        display: grid;
+        gap: 1.25rem;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: clamp(1.8rem, 4vw, 2.2rem);
+        letter-spacing: -0.03em;
+      }
+
+      .layout {
+        display: grid;
+        gap: 1.25rem;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .layout-column {
+        display: grid;
+        gap: 1rem;
+        align-content: start;
+      }
+
+      form,
+      .panel {
+        background: #fff;
+        border-radius: 14px;
+        padding: 1.4rem 1.6rem;
+        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+        display: grid;
+        gap: 1.1rem;
+      }
+
+      .info-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 1.2rem 1.4rem;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.07);
+        display: grid;
+        gap: 0.48rem;
+        border-left: 4px solid rgba(37, 99, 235, 0.25);
+      }
+
+      .info-card.absolute {
+        border-left-color: rgba(220, 38, 38, 0.4);
+      }
+
+      .info-card.relative {
+        border-left-color: rgba(234, 179, 8, 0.55);
+      }
+
+      .info-card h3 {
+        margin: 0;
+        font-size: 1.05rem;
+        color: #0f172a;
+      }
+
+      .info-card p {
+        margin: 0;
+        color: #475569;
+        font-size: 0.9rem;
+        line-height: 1.45;
+      }
+
+      .info-card-list {
+        margin: 0;
+        padding-left: 1.1rem;
+        display: grid;
+        gap: 0.4rem;
+        font-size: 0.9rem;
+        color: #1e293b;
+      }
+
+      .info-card-list.two-column {
+        columns: 2;
+        column-gap: 1.2rem;
+      }
+
+      fieldset {
+        border: none;
+        padding: 0;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .fields-grid {
+        display: grid;
+        gap: 0.9rem;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      }
+
+      .field {
+        display: grid;
+        gap: 0.25rem;
+        position: relative;
+      }
+
+      .field-hint {
+        position: absolute;
+        top: calc(50% + 12px);
+        right: 1.7rem;
+        transform: translateY(-50%);
+        margin: 0;
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+        color: rgba(29, 78, 216, 0.72);
+        font-size: 0.8rem;
+        font-weight: 600;
+        line-height: 1.2;
+        white-space: nowrap;
+        border: none;
+        box-shadow: none;
+        pointer-events: none;
+        max-width: clamp(0px, calc(100% - 5.25rem), 11rem);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        z-index: 1;
+      }
+
+      label {
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 0.55rem 0.65rem;
+        font-size: 0.95rem;
+        border-radius: 10px;
+        border: 1px solid rgba(71, 85, 105, 0.35);
+        box-sizing: border-box;
+        transition: border 0.2s ease, box-shadow 0.2s ease;
+        background: #fff;
+      }
+
+      input:focus,
+      select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+        outline: none;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.6rem;
+        align-items: center;
+      }
+
+      button {
+        border: none;
+        background: linear-gradient(135deg, #2563eb, #4338ca);
+        color: #fff;
+        padding: 0.65rem 1.6rem;
+        border-radius: 14px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 12px 26px rgba(37, 99, 235, 0.22);
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        min-width: 140px;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 16px 32px rgba(37, 99, 235, 0.24);
+      }
+
+      button:focus-visible {
+        outline: 3px solid rgba(37, 99, 235, 0.45);
+        outline-offset: 2px;
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      .panel h2 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+
+      .dose-grid {
+        display: grid;
+        gap: 0.75rem;
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        border: 1px solid rgba(37, 99, 235, 0.2);
+        border-radius: 14px;
+        padding: 0.85rem 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: #f8fafc;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+      }
+
+      .card h3 {
+        margin: 0;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #1e3a8a;
+        flex: 0 0 72px;
+      }
+
+      .card strong {
+        font-size: 1.5rem;
+        color: #0f172a;
+      }
+
+      .card p {
+        margin: 0;
+        font-size: 0.92rem;
+        color: #334155;
+        flex: 1;
+        text-align: left;
+      }
+
+      .monitor {
+        display: none;
+        border-radius: 12px;
+        padding: 0.75rem 0.95rem;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(37, 99, 235, 0.15);
+        font-size: 0.9rem;
+        color: #1e3a8a;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.12);
+        text-align: center;
+      }
+
+      .monitor.visible {
+        display: block;
+      }
+
+      .monitor h3 {
+        margin: 0 0 0.35rem;
+        font-size: 0.95rem;
+        text-align: center;
+      }
+
+      .monitor p {
+        margin: 0;
+        display: grid;
+        gap: 0.25rem;
+        justify-items: center;
+      }
+
+      .monitoring-note {
+        font-size: 0.85rem;
+        color: #1e3a8a;
+        text-align: center;
+      }
+
+      .monitoring-date {
+        font-size: 1.05rem;
+        font-weight: 600;
+        text-align: center;
+        color: #1e3a8a;
+      }
+
+      .alerts {
+        display: none;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        background: rgba(254, 243, 199, 0.6);
+        border: 1px solid rgba(202, 138, 4, 0.25);
+        font-size: 0.88rem;
+        color: #7c2d12;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 80;
+        backdrop-filter: blur(2px);
+      }
+
+      .modal-overlay.visible {
+        display: flex;
+      }
+
+      .modal-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 1.4rem 1.6rem;
+        max-width: 340px;
+        width: 92%;
+        box-shadow: 0 24px 48px rgba(15, 23, 42, 0.25);
+        display: grid;
+        gap: 1rem;
+        color: #0f172a;
+      }
+
+      .modal-card h3 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      .modal-card button {
+        justify-self: end;
+        min-width: 100px;
+      }
+
+      .alerts.visible {
+        display: block;
+      }
+
+      .alerts ul {
+        list-style: disc;
+        margin: 0;
+        padding-left: 1.1rem;
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .utility-grid {
+        display: grid;
+        gap: 0.9rem;
+        grid-template-columns: minmax(0, 1fr) minmax(160px, 270px);
+        align-items: stretch;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+
+      .copy-card {
+        border: 1px solid rgba(16, 185, 129, 0.45);
+        border-radius: 12px;
+        padding: 0.7rem 0.85rem;
+        background: rgba(16, 185, 129, 0.18);
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+        width: 100%;
+        max-width: 450px;
+        justify-self: end;
+      }
+
+      .copy-card h3 {
+        margin: 0;
+        font-size: 0.95rem;
+        color: #047857;
+      }
+
+      .copy-footer {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .copy-footer .copy-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #047857;
+      }
+
+      .copy-status {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #047857;
+        min-width: 8.5rem;
+        text-align: left;
+      }
+
+      .copy-status[data-variant="success"] {
+        color: #047857;
+      }
+
+      .copy-status[data-variant="error"] {
+        color: #b91c1c;
+      }
+
+      .copy-trigger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        padding: 0;
+        min-width: auto;
+        background: linear-gradient(135deg, #16a34a, #15803d);
+        color: #fff;
+        box-shadow: 0 8px 20px rgba(22, 163, 74, 0.32);
+      }
+
+      .copy-trigger:hover {
+        background: linear-gradient(135deg, #15803d, #166534);
+      }
+
+      .copy-trigger.copy-trigger--success {
+        background: linear-gradient(135deg, #16a34a, #15803d);
+        box-shadow: 0 8px 20px rgba(22, 163, 74, 0.32);
+      }
+
+      .copy-trigger.copy-trigger--error {
+        background: linear-gradient(135deg, #f97316, #ea580c);
+        box-shadow: 0 8px 18px rgba(249, 115, 22, 0.24);
+      }
+
+      .copy-trigger .icon {
+        display: inline-flex;
+        width: 20px;
+        height: 20px;
+      }
+
+      .compact-grid {
+        display: grid;
+        gap: 0.5rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        align-items: stretch;
+      }
+
+      .metric-card {
+        border: 1px solid rgba(37, 99, 235, 0.18);
+        border-radius: 12px;
+        padding: 0.55rem 0.75rem;
+        background: #f8fafc;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+        display: grid;
+        gap: 0.2rem;
+      }
+
+      .metric-card strong {
+        font-size: 0.7rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        color: #1e3a8a;
+      }
+
+      .metric-card span {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #0f172a;
+      }
+
+      footer {
+        text-align: center;
+        color: #64748b;
+        font-size: 0.85rem;
+        padding-top: 1rem;
+      }
+
+      @media (max-width: 900px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .layout-column {
+          gap: 0.9rem;
+        }
+
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+
+      .secondary {
+        background: #e2e8f0;
+        color: #1e293b;
+        box-shadow: none;
+        min-width: 140px;
+        padding: 0.65rem 1.6rem;
+      }
+
+      .secondary:hover {
+        background: #d1d5db;
+      }
+
+      .secondary:focus-visible {
+        outline: 3px solid rgba(148, 163, 184, 0.55);
+        outline-offset: 2px;
+      }
+
+      @media (max-width: 640px) {
+        .actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .info-card-list.two-column {
+          columns: 1;
+        }
+
+        .fields-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .field:not(.field--inline-hint) {
+          position: static;
+        }
+
+        .field--inline-hint .field-hint {
+          font-size: 0.74rem;
+          right: 2rem;
+          max-width: clamp(0px, calc(100% - 4.8rem), 10rem);
+        }
+
+        .card {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+
+        .card h3 {
+          flex: none;
+        }
+
+        .card strong {
+          font-size: 1.3rem;
+        }
+
+        button,
+        .secondary {
+          width: 100%;
+        }
+
+        .compact-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .metric-card strong {
+          font-size: 0.68rem;
+        }
+
+        .metric-card span {
+          font-size: 1rem;
+        }
+
+        .utility-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .copy-card {
+          width: 100%;
+          max-width: none;
+          justify-self: stretch;
+        }
+
+        .copy-footer {
+          justify-content: center;
+        }
+
+        .copy-trigger {
+          width: 52px;
+          height: 52px;
+          justify-content: center;
+        }
+
+        .copy-status {
+          min-width: 0;
+          width: 100%;
+          text-align: center;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .field--inline-hint .field-hint {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Gentacalc</h1>
+      </header>
+
+      <div class="layout">
+        <div class="layout-column">
+          <form id="dose-form" novalidate>
+            <fieldset>
+              <div class="fields-grid">
+                <div class="field">
+                  <label for="age">Alder</label>
+                  <input id="age" name="age" type="number" min="16" max="110" step="1" required />
+                </div>
+                <div class="field">
+                  <label for="sex">Kjønn</label>
+                  <select id="sex" name="sex" required>
+                    <option value="" disabled selected>Velg…</option>
+                    <option value="female">Kvinne</option>
+                    <option value="male">Mann</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="weight">Vekt (kg)</label>
+                  <input id="weight" name="weight" type="number" min="35" max="250" step="1" required />
+                </div>
+                <div class="field">
+                  <label for="height">Høyde (cm)</label>
+                  <input id="height" name="height" type="number" min="130" max="210" step="1" />
+                </div>
+                <div class="field">
+                  <label for="mg_per_kg">Dose (mg/kg)</label>
+                  <input id="mg_per_kg" name="mg_per_kg" type="number" min="3" max="7" step="1" required />
+                </div>
+                <div class="field field--inline-hint">
+                  <label for="creatinine">Kreatinin (µmol/L)</label>
+                  <input
+                    id="creatinine"
+                    name="creatinine"
+                    type="number"
+                    min="30"
+                    max="1000"
+                    step="1"
+                    required
+                    aria-describedby="creatinine-hint"
+                  />
+                  <span class="field-hint" id="creatinine-hint">Bruk habituell kreatinin</span>
+                </div>
+                <div class="field">
+                  <label for="first_dose_hour">Klokkeslett første dose</label>
+                  <input
+                    id="first_dose_hour"
+                    name="first_dose_hour"
+                    type="number"
+                    min="1"
+                    max="24"
+                    step="1"
+                    required
+                  />
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="actions">
+              <button type="button" class="secondary" id="reset-button">Nullstill</button>
+              <button type="submit">Beregn</button>
+            </div>
+          </form>
+
+          <section class="info-card absolute" aria-labelledby="absolute-contra-heading">
+            <h3 id="absolute-contra-heading">Kontraindikasjoner for bruk av gentamicin</h3>
+            <ul class="info-card-list">
+              <li>Kronisk nyresvikt, GFR &lt; 40 ml/min</li>
+              <li>Fulminant flerorgansvikt</li>
+              <li>Myastenia gravis</li>
+              <li>Pasient eller førstegradsslektning med nedsatt hørsel forårsaket av gentamicin (sjeldent)</li>
+            </ul>
+          </section>
+        </div>
+
+        <div class="layout-column">
+          <section class="panel">
+
+            <div class="dose-grid">
+              <article class="card">
+                <h3>Dose 1</h3>
+                <strong id="dose1-value">— mg</strong>
+                <p id="dose1-instruction">—</p>
+              </article>
+              <article class="card">
+                <h3>Dose 2</h3>
+                <strong id="dose2-value">— mg</strong>
+                <p id="dose2-instruction">—</p>
+              </article>
+              <article class="card">
+                <h3>Dose 3</h3>
+                <strong id="dose3-value">— mg</strong>
+                <p id="dose3-instruction">—</p>
+              </article>
+            </div>
+
+            <div class="utility-grid">
+              <section class="monitor" id="monitoring-block">
+                <h3>Bestill s-gentamicin</h3>
+                <p id="monitoring-text">—</p>
+              </section>
+              <section class="copy-card hidden" id="copy-plan-card" aria-labelledby="copy-plan-heading">
+                <h3 id="copy-plan-heading">Journalfør doseringsplan</h3>
+                <div class="copy-footer">
+                  <span class="copy-label">Kopier:</span>
+                  <button type="button" id="copy-plan-button" class="copy-trigger" disabled>
+                    <span class="icon" aria-hidden="true"></span>
+                    <span class="sr-only">Journalfør doseringsplan</span>
+                  </button>
+                  <span id="copy-plan-status" class="copy-status" aria-live="polite"></span>
+                </div>
+              </section>
+            </div>
+
+            <section class="alerts" id="alerts">
+              <ul id="alerts-body"></ul>
+            </section>
+
+            <div class="compact-grid">
+              <div class="metric-card" aria-live="polite">
+                <strong>GFR</strong>
+                <span id="gfr-value">— ml/min</span>
+              </div>
+              <div class="metric-card" aria-live="polite">
+                <strong>Cockcroft–Gault</strong>
+                <span id="cg-value">—</span>
+              </div>
+              <div class="metric-card" aria-live="polite">
+                <strong>BMI</strong>
+                <span id="bmi-value">—</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="info-card relative" aria-labelledby="relative-contra-heading">
+            <h3 id="relative-contra-heading">Relative kontraindikasjoner for gentamicin</h3>
+            <p>Gentamicin bør som hovedregel ikke gis ved relative kontraindikasjoner. Én dose kan likevel gis. Se prosedyre for detaljer.</p>
+            <ul class="info-card-list two-column">
+              <li>Cisplatin eller karboplatin siste 2 måneder</li>
+              <li>Brukt gentamicin siste måned</li>
+              <li>Høydose ifosfamid i sarkombehandling</li>
+              <li>Høydose metotreksat i sarkombehandling</li>
+              <li>Myelomatose</li>
+              <li>Nyretransplantasjon</li>
+              <li>Massiv ascites</li>
+              <li>Gravid i 2. eller 3. trimester</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+
+      <footer>
+        &copy; Prototyp SSHF – Utarbeidet av Runar Hamre.
+        Webutvikling/design av Sebastian Alfsen; kildekode og lisens <a href="https://github.com/STAlfsen/Gentacalc" target="_blank" rel="noopener noreferrer">finnes her</a>.
+      </footer>
+    </main>
+
+    <div
+      id="validation-modal"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="validation-title"
+    >
+      <div class="modal-card">
+        <h3 id="validation-title">Kontroller verdien</h3>
+        <p id="validation-message"></p>
+        <button type="button" id="validation-close">OK</button>
+      </div>
+    </div>
+
+    <script>
+      const form = document.querySelector("#dose-form");
+      const resetButton = document.querySelector("#reset-button");
+
+      const selectors = {
+        doseValues: [
+          document.querySelector("#dose1-value"),
+          document.querySelector("#dose2-value"),
+          document.querySelector("#dose3-value"),
+        ],
+        doseInstructions: [
+          document.querySelector("#dose1-instruction"),
+          document.querySelector("#dose2-instruction"),
+          document.querySelector("#dose3-instruction"),
+        ],
+        monitoringBlock: document.querySelector("#monitoring-block"),
+        monitoringText: document.querySelector("#monitoring-text"),
+        alerts: document.querySelector("#alerts"),
+        alertsBody: document.querySelector("#alerts-body"),
+        gfrValue: document.querySelector("#gfr-value"),
+        bmi: document.querySelector("#bmi-value"),
+        cg: document.querySelector("#cg-value"),
+        panel: document.querySelector(".panel"),
+      };
+
+      const validationModal = document.querySelector("#validation-modal");
+      const validationMessage = document.querySelector("#validation-message");
+      const validationClose = document.querySelector("#validation-close");
+      let lastInvalidInput = null;
+      let modalVisible = false;
+
+      const copyCard = document.querySelector("#copy-plan-card");
+      const copyButton = document.querySelector("#copy-plan-button");
+      const copyStatus = document.querySelector("#copy-plan-status");
+      const copyIcon = copyButton ? copyButton.querySelector(".icon") : null;
+      const isCopyAvailable = () =>
+        copyCard &&
+        !copyCard.classList.contains("hidden") &&
+        copyButton &&
+        !copyButton.disabled;
+      const copyDefaultHint = "←Klikk/Trykk enter";
+      const defaultCopyIcon = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="12" height="12" rx="2" ry="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+      `;
+      const successCopyIcon = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6L9 17l-5-5" />
+        </svg>
+      `;
+      const errorCopyIcon = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9" />
+          <line x1="12" y1="8" x2="12" y2="13" />
+          <circle cx="12" cy="16" r="1" fill="currentColor" stroke="none" />
+        </svg>
+      `;
+      if (copyIcon) {
+        copyIcon.innerHTML = defaultCopyIcon;
+      }
+      let lastPlanPayload = null;
+      let copyStatusTimer = null;
+      let formDirtySincePlan = true;
+      let copyShortcutReady = false;
+
+      const syncPanelHeight = () => {
+        if (!selectors.panel) return;
+        selectors.panel.style.removeProperty("min-height");
+        const formHeight = form ? form.getBoundingClientRect().height : 0;
+        if (formHeight) {
+          const style = window.getComputedStyle(selectors.panel);
+          const verticalPadding = parseFloat(style.paddingTop || "0") + parseFloat(style.paddingBottom || "0");
+          const verticalBorder = parseFloat(style.borderTopWidth || "0") + parseFloat(style.borderBottomWidth || "0");
+          const adjustment = -0.7;
+          const target = Math.max(0, formHeight - verticalPadding - verticalBorder + adjustment);
+          selectors.panel.style.minHeight = `${target}px`;
+        }
+      };
+
+      const showCopyHint = () => {
+        if (!copyStatus) {
+          return;
+        }
+        if (isCopyAvailable()) {
+          copyStatus.textContent = copyDefaultHint;
+        } else {
+          copyStatus.textContent = "";
+        }
+        copyStatus.removeAttribute("data-variant");
+      };
+
+      const setCopyStatus = (message = "", variant) => {
+        if (!copyStatus) return;
+        if (copyStatusTimer) {
+          clearTimeout(copyStatusTimer);
+          copyStatusTimer = null;
+        }
+        if (copyButton) {
+          copyButton.classList.remove("copy-trigger--success", "copy-trigger--error");
+        }
+        if (copyIcon) {
+          copyIcon.innerHTML = defaultCopyIcon;
+        }
+        if (!message) {
+          showCopyHint();
+          return;
+        }
+
+        copyStatus.textContent = message;
+        if (variant) {
+          copyStatus.dataset.variant = variant;
+        }
+        if (copyIcon) {
+          if (variant === "success") {
+            copyIcon.innerHTML = successCopyIcon;
+          } else if (variant === "error") {
+            copyIcon.innerHTML = errorCopyIcon;
+          }
+        }
+        if (copyButton) {
+          if (variant === "success") {
+            copyButton.classList.add("copy-trigger--success");
+          } else if (variant === "error") {
+            copyButton.classList.add("copy-trigger--error");
+          }
+        }
+
+        copyStatusTimer = setTimeout(() => {
+          if (copyButton) {
+            copyButton.classList.remove("copy-trigger--success", "copy-trigger--error");
+          }
+          if (copyIcon) {
+            copyIcon.innerHTML = defaultCopyIcon;
+          }
+          showCopyHint();
+          copyStatusTimer = null;
+        }, 4000);
+      };
+
+      const buildCopyText = (payload) => {
+        if (!payload || !payload.plan) {
+          return "";
+        }
+        const { plan } = payload;
+        const hasDose = [plan.first_dose_mg, plan.second_dose_mg, plan.third_dose_mg].some(
+          (value) => value != null
+        );
+        if (!hasDose) {
+          return "";
+        }
+        const instructions = plan.instructions || [];
+        const doses = [
+          { label: "Dose 1", value: plan.first_dose_mg, instruction: instructions[0] },
+          { label: "Dose 2", value: plan.second_dose_mg, instruction: instructions[1] },
+          { label: "Dose 3", value: plan.third_dose_mg, instruction: instructions[2] },
+        ];
+
+        const lines = doses
+          .map(({ label, value, instruction }) => {
+            const amountText = value == null ? "—" : `${value} mg`;
+            const trimmedInstruction = (instruction || "").replace(/\s+/g, " ").trim();
+            if (!trimmedInstruction) {
+              if (value == null) {
+                return null;
+              }
+              return `${label}: ${amountText}`;
+            }
+            return `${label}: ${amountText} – ${trimmedInstruction}`;
+          })
+          .filter(Boolean);
+
+        return lines.join("\n");
+      };
+
+      const updateCopyUI = (payload) => {
+        const text = buildCopyText(payload);
+        if (copyButton) {
+          const disabled = !text;
+          copyButton.disabled = disabled;
+          if (disabled) {
+            copyButton.setAttribute("aria-disabled", "true");
+            if (copyIcon) {
+              copyIcon.innerHTML = defaultCopyIcon;
+            }
+            copyButton.classList.remove("copy-trigger--success", "copy-trigger--error");
+          } else {
+            copyButton.removeAttribute("aria-disabled");
+          }
+        }
+        if (copyCard) {
+          if (text) {
+            copyCard.classList.remove("hidden");
+          } else {
+            copyCard.classList.add("hidden");
+          }
+        }
+        if (!text) {
+          setCopyStatus("");
+        } else {
+          showCopyHint();
+        }
+        syncPanelHeight();
+        return text;
+      };
+
+      const fallbackCopy = (text) => {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, textarea.value.length);
+        let success = false;
+        try {
+          success = document.execCommand("copy");
+        } catch (error) {
+          success = false;
+        }
+        document.body.removeChild(textarea);
+        return success;
+      };
+
+      const attemptCopy = async (text) => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          return true;
+        }
+        return fallbackCopy(text);
+      };
+
+      updateCopyUI(null);
+
+      const fieldRefs = {
+        age: document.querySelector("#age"),
+        sex: document.querySelector("#sex"),
+        weight: document.querySelector("#weight"),
+        height: document.querySelector("#height"),
+        mg_per_kg: document.querySelector("#mg_per_kg"),
+        creatinine: document.querySelector("#creatinine"),
+        first_dose_hour: document.querySelector("#first_dose_hour"),
+      };
+
+      const requiredFieldLabels = {
+        age: "Alder",
+        sex: "Kjønn",
+        weight: "Vekt (kg)",
+        mg_per_kg: "Dose (mg/kg)",
+        creatinine: "Kreatinin (µmol/L)",
+        first_dose_hour: "Klokkeslett for første dose",
+      };
+
+      const fieldRules = {
+        age: {
+          min: 16,
+          max: 110,
+          low: "Kalkulatoren er ikke beregnet til bruk på barn under 16 år.",
+          high: "Alder er over anbefalt område for kalkulatoren.",
+        },
+        weight: {
+          min: 35,
+          max: 250,
+          low: "Kalkulatoren er ikke beregnet på pasienter med grov undervekt eller overvekt.",
+          high: "Kalkulatoren er ikke beregnet på pasienter med grov undervekt eller overvekt.",
+        },
+        height: {
+          min: 130,
+          max: 210,
+          low: "Er høyden korrekt? Må oppgis i centimeter.",
+          high: "Er høyden korrekt? Må oppgis i centimeter.",
+        },
+        mg_per_kg: {
+          min: 3,
+          max: 7,
+          low: "Dosering er utenfor anbefalt område!",
+          high: "Dosering er utenfor anbefalt område!",
+        },
+        creatinine: {
+          min: 30,
+          max: 1000,
+          low: "S-kreatinin er en ekstremverdi, er dette riktig?",
+          high: "S-kreatinin er en ekstremverdi, er dette riktig?",
+        },
+        first_dose_hour: {
+          min: 1,
+          max: 24,
+          low: "Klokkeslett oppgis som mellom 1 og 24.",
+          high: "Klokkeslett oppgis som mellom 1 og 24.",
+        },
+      };
+
+      const showValidation = (message, input) => {
+        if (!validationModal || !validationMessage || !validationClose) {
+          return;
+        }
+        validationMessage.textContent = message;
+        validationModal.classList.add("visible");
+        validationClose.focus();
+        modalVisible = true;
+        lastInvalidInput = input;
+      };
+
+      const hideValidation = () => {
+        if (!validationModal) {
+          return;
+        }
+        validationModal.classList.remove("visible");
+        modalVisible = false;
+        if (lastInvalidInput) {
+          lastInvalidInput.focus();
+          lastInvalidInput = null;
+        }
+      };
+
+      if (validationClose) {
+        validationClose.addEventListener("click", hideValidation);
+      }
+      if (validationModal) {
+        validationModal.addEventListener("click", (event) => {
+          if (event.target === validationModal) {
+            hideValidation();
+          }
+        });
+      }
+      document.addEventListener("keydown", (event) => {
+        if (modalVisible && event.key === "Escape") {
+          hideValidation();
+        }
+      });
+
+      const validateField = (key, input, { silent = false, force = false } = {}) => {
+        const rule = fieldRules[key];
+        if (!rule || !input) return true;
+        const raw = input.value.trim();
+        if (!raw) {
+          input.setCustomValidity("");
+          input.dataset.invalid = "";
+          delete input.dataset.lastShown;
+          return true;
+        }
+        const value = Number(raw);
+        const shouldClearValue = force || !silent;
+
+        if (!Number.isFinite(value)) {
+          const msg = "Oppgi en gyldig tallverdi.";
+          if (shouldClearValue) {
+            input.value = "";
+          }
+          input.setCustomValidity(msg);
+          const shouldShow = force || (!silent && input.dataset.lastShown !== "format");
+          input.dataset.invalid = "format";
+          if (shouldShow) {
+            showValidation(msg, input);
+            input.dataset.lastShown = "format";
+          }
+          return false;
+        }
+
+        let message = "";
+        let flag = "";
+        if (value < rule.min) {
+          message = rule.low || rule.message;
+          flag = "low";
+        } else if (value > rule.max) {
+          message = rule.high || rule.message;
+          flag = "high";
+        }
+
+        if (message) {
+          if (shouldClearValue) {
+            input.value = "";
+          }
+          input.setCustomValidity(message);
+          const shouldShow = force || (!silent && input.dataset.lastShown !== flag);
+          input.dataset.invalid = flag;
+          if (shouldShow) {
+            showValidation(message, input);
+            input.dataset.lastShown = flag;
+          }
+          return false;
+        }
+
+        input.setCustomValidity("");
+        input.dataset.invalid = "";
+        delete input.dataset.lastShown;
+        return true;
+      };
+
+      const validateAll = () => {
+        return Object.entries(fieldRefs).every(([key, input]) => validateField(key, input, { force: true }));
+      };
+
+      Object.entries(fieldRefs).forEach(([key, input]) => {
+        if (!input) return;
+        input.addEventListener("input", () => {
+          formDirtySincePlan = true;
+          copyShortcutReady = false;
+          if (!input.dataset.invalid) {
+            return;
+          }
+          input.dataset.invalid = "";
+          delete input.dataset.lastShown;
+          input.setCustomValidity("");
+        });
+        input.addEventListener("change", () => {
+          formDirtySincePlan = true;
+          copyShortcutReady = false;
+        });
+        input.addEventListener("blur", () => {
+          validateField(key, input);
+        });
+      });
+
+      if (copyButton) {
+        copyButton.addEventListener("click", async () => {
+          const text = buildCopyText(lastPlanPayload);
+          if (!text) {
+            setCopyStatus("Ingen doseringsplan å kopiere.", "error");
+            return;
+          }
+          try {
+            const success = await attemptCopy(text);
+            if (!success) {
+              setCopyStatus("Kunne ikke kopiere plan.", "error");
+              return;
+            }
+            setCopyStatus("Plan kopiert.", "success");
+          } catch (error) {
+            const fallbackSuccess = fallbackCopy(text);
+            if (fallbackSuccess) {
+              setCopyStatus("Plan kopiert.", "success");
+            } else {
+              setCopyStatus("Kunne ikke kopiere plan.", "error");
+            }
+          }
+        });
+      }
+
+      const formatNumber = (value, digits = 1) =>
+        Number.isFinite(value) ? value.toFixed(digits) : "—";
+
+      const renderAlerts = (alerts) => {
+        if (!alerts.length) {
+          selectors.alerts.classList.remove("visible");
+          selectors.alertsBody.innerHTML = "";
+          return;
+        }
+        selectors.alerts.classList.add("visible");
+        selectors.alertsBody.innerHTML = alerts
+          .map((alert) => `<li>${alert.replace(/\n/g, "<br />")}</li>`)
+          .join("");
+      };
+
+      const renderPlan = (payload) => {
+        lastPlanPayload = payload;
+        updateCopyUI(payload);
+        setCopyStatus("");
+        formDirtySincePlan = false;
+        copyShortcutReady = true;
+        const { plan, context } = payload;
+        const doseValues = [
+          plan.first_dose_mg,
+          plan.second_dose_mg,
+          plan.third_dose_mg,
+        ];
+
+        doseValues.forEach((value, index) => {
+          selectors.doseValues[index].textContent = value == null ? "— mg" : `${value} mg`;
+          selectors.doseInstructions[index].textContent = plan.instructions[index] || "—";
+        });
+
+        selectors.gfrValue.textContent = formatNumber(context.chosen_gfr, 0);
+        selectors.bmi.textContent = formatNumber(context.bmi, 2);
+
+        const cg = context.cockcroft_gault;
+        const cgFemale = context.cockcroft_gault_female;
+        if (cg != null) {
+          selectors.cg.textContent = `${formatNumber(cg, 0)} ml/min`;
+        } else if (cgFemale != null) {
+          selectors.cg.textContent = `${formatNumber(cgFemale, 0)} ml/min`;
+        } else {
+          selectors.cg.textContent = "—";
+        }
+
+        renderAlerts(plan.alerts || []);
+
+        if (plan.monitoring) {
+          selectors.monitoringBlock.classList.add("visible");
+          const detailText = plan.monitoring.split(":").slice(1).join(":").trim();
+          if (detailText) {
+            selectors.monitoringText.innerHTML = `
+              <span class="monitoring-note">(Eller vurder videre bruk)</span>
+              <span class="monitoring-date">${detailText}</span>
+            `;
+          } else {
+            selectors.monitoringText.innerHTML = `<span class="monitoring-note">(Eller vurder videre bruk)</span>`;
+          }
+        } else {
+          selectors.monitoringBlock.classList.remove("visible");
+          selectors.monitoringText.textContent = "—";
+        }
+        syncPanelHeight();
+
+      };
+
+      const resetUI = () => {
+        form.reset();
+        lastPlanPayload = null;
+        updateCopyUI(null);
+        setCopyStatus("");
+        formDirtySincePlan = true;
+        copyShortcutReady = false;
+        selectors.doseValues.forEach((node) => {
+          node.textContent = "— mg";
+        });
+        selectors.doseInstructions.forEach((node) => {
+          node.textContent = "—";
+        });
+        selectors.gfrValue.textContent = "— ml/min";
+        selectors.bmi.textContent = "—";
+        selectors.cg.textContent = "—";
+        selectors.monitoringBlock.classList.remove("visible");
+        selectors.monitoringText.textContent = "—";
+        renderAlerts([]);
+        Object.values(fieldRefs).forEach((input) => {
+          if (!input) return;
+          input.dataset.invalid = "";
+          input.setCustomValidity("");
+          delete input.dataset.lastShown;
+        });
+        hideValidation();
+        syncPanelHeight();
+      };
+
+      form.addEventListener("keydown", (event) => {
+        if (
+          event.key !== "Enter" ||
+          event.shiftKey ||
+          event.ctrlKey ||
+          event.altKey ||
+          event.metaKey ||
+          event.repeat
+        ) {
+          return;
+        }
+        if (!formDirtySincePlan && copyShortcutReady && isCopyAvailable()) {
+          event.preventDefault();
+          copyButton.click();
+        }
+      });
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        hideValidation();
+
+        if (!validateAll()) {
+          return;
+        }
+
+        const formData = new FormData(form);
+        const payload = Object.fromEntries(formData.entries());
+
+        const missingFields = Object.entries(requiredFieldLabels).filter(([key]) => {
+          const raw = payload[key];
+          return raw == null || String(raw).trim() === "";
+        });
+
+        if (missingFields.length) {
+          const [firstKey, label] = missingFields[0];
+          const message =
+            missingFields.length > 1
+              ? "Flere felt mangler verdier. Fyll ut alle nødvendige felt før du beregner."
+              : `${label} må fylles ut.`;
+          showValidation(message, fieldRefs[firstKey]);
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/dose", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          const data = await response.json();
+
+          if (!response.ok) {
+            throw new Error(data.error || "Kunne ikke beregne dose.");
+          }
+
+          hideValidation();
+          renderPlan(data);
+        } catch (error) {
+          const message =
+            error instanceof Error && error.message
+              ? error.message
+              : "Kunne ikke beregne dose.";
+          showValidation(message, null);
+          copyShortcutReady = false;
+        }
+      });
+
+      resetButton.addEventListener("click", resetUI);
+
+      const handleResize = () => requestAnimationFrame(syncPanelHeight);
+      window.addEventListener("load", handleResize, { once: true });
+      window.addEventListener("resize", handleResize);
+      requestAnimationFrame(syncPanelHeight);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,53 @@
+# macOS
+.DS_Store
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.so
+.Python
+.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# Packaging / build outputs
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Test & coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Logs & reports
+*.log
+eb-tail.log
+
+# Temporary notes / generated docs
+dns_validation_records.txt
+
+# Excel extraction outputs
+extracted/
+
+# Deployment bundles
+gentacalc-*.zip
+
+# AWS / secrets
+aws_keys
+.aws/credentials
+.aws/config
+
+# Misc tooling state
+.idea/
+.vscode/
+*.swp
+*.swo
+# Legacy artifacts
+scripts/Original_gentaCalc.xlsm

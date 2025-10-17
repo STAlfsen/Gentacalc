@@ -1,0 +1,53 @@
+{
+  "under_80_guidance": [
+    "Dosering ved alder under 80 år",
+    "Sepsis/ Nøytropen feber = 7 mg/kg",
+    "Øvrige indikasjoner = 5-6 mg/kg",
+    "Endokarditt (synergisme) 3 mg/kg"
+  ],
+  "over_80_guidance": [
+    "Dosering for pasienter over 80 år:",
+    "Sepsis/ Nøytropen feber = 5 mg/kg",
+    "Øvrige indikasjoner = 4-5 mg/kg",
+    "Endokarditt (synergisme) 3 mg /kg"
+  ],
+  "contraindications": [
+    "Kontraindikasjoner for bruk av gentamicin:",
+    "Kronisk nyresvikt, GFR < 40 ml/min",
+    "Fulminant flerorgansvikt",
+    "Myastenia gravis",
+    "Pasient eller førstegradsslektning ned nedsatt hørsel forårsaket av gentamicin (sjeldent)"
+  ],
+  "relative_contraindications": [
+    "Relative kontraindikasjoner for gentamicin:",
+    "Gentamicin bør som hovedregel ikke gis ved relative kontraindikasjoner,",
+    "én dose kan likevel gis. Trykk her for å se prosedyre.",
+    "Cisplatin eller karboplatin siste 2 måneder      • Myelomatose",
+    "Brukt gentamicin siste måned                            • Nyretransplantasjon",
+    "Høydose ifosfamid i sarkombehandling            • Massiv ascites",
+    "Høydose metotreksat i sarkombehandling       • Gravid i 2. eller 3. trimester"
+  ],
+  "bmi_over_35": [
+    "BMI er over 35:",
+    "Bestill i tillegg s-gentamicin 8 timer etter første dose er gitt."
+  ],
+  "dose_over_600": [
+    "Dosen er rundet ned til 600 mg.",
+    "Det er sjeldent indisert med doser over 600 mg"
+  ],
+  "creatinine_floor": [
+    "Kreatinin er automatisk rundet opp til 60"
+  ],
+  "over_80_precautions": [
+    "For pasienter over 80 år er det særlig viktig:",
+    "At pasient er normohydrert og ikke hypotensiv.",
+    "At NSAIDs og loopdiuretika vurderes nullet hvis det ikke er sterk indikasjon."
+  ],
+  "habituell_creatinine": [
+    "Bruk habituell kreatinin"
+  ],
+  "bmi_30_35": [
+    "BMI er mellom 30-35 :",
+    "Vurder 8-timersprøve ved høy nefrotoksisk byrde."
+  ]
+}
